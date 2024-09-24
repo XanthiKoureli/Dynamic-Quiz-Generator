@@ -6,6 +6,7 @@ import random
 
 client = OpenAI(api_key=st.secrets["OPEN_AI_KEY"])
 
+
 # Question class to store details of each question
 class Question:
     def __init__(self, question, options, correct_answer, explanation=None):
@@ -13,6 +14,7 @@ class Question:
         self.options = options
         self.correct_answer = correct_answer
         self.explanation = explanation
+
 
 # Quiz class to manage quiz state and interactions
 class Quiz:
@@ -83,7 +85,7 @@ class Quiz:
     def display_results(self):
         st.write(f"Quiz completed! Your score: {st.session_state.score}/{len(self.questions)}")
         # Provide feedback based on score
-        if  st.session_state.score/len(self.questions) == 1.0:
+        if st.session_state.score/len(self.questions) == 1.0:
             st.success("Congrats")
             st.balloons()
         else:
@@ -110,6 +112,7 @@ class Quiz:
         st.session_state.answers_submitted = 0
         random.shuffle(st.session_state.questions)
         st.rerun()
+
 
 # Function to track quiz history (questions and correct answers)
 def quiz_history():
@@ -204,14 +207,15 @@ def main():
         if st.button('Generate New Question', disabled=st.session_state.answers_submitted > 0):
             generate_and_append_question(user_input)
 
-        if is_disabled:
-            st.info("This action is not supported while the quiz is in session.", icon="🚨")
-
     with col2:
-        if st.button("Edit Quiz"):
+        if st.button("Edit Quiz", disabled=st.session_state.answers_submitted > 0):
             edit_quiz()
 
+    if is_disabled:
+        st.info("This action is not supported while the quiz is in session.", icon="🚨")
+
     st.session_state.quiz.display_quiz()
+
 
 if __name__ == "__main__":
     main()
